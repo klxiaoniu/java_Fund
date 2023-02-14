@@ -1,0 +1,13 @@
+{% extends "_base.html" %}
+
+{% block main %}
+
+{% if user == null %}
+<h3>Welcome! Please Sign in or register to continue.</h3>
+<p><a href="/signin">Sign In</a> or <a href="/register">Register</a>
+{% else %}
+<h3>Welcome {{ user.name }}!</h3>
+<p><a href="/newfund">New Fund</a>
+{% endif %}
+
+{% endblock %}
