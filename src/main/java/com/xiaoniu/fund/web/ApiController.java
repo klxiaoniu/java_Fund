@@ -1,10 +1,14 @@
 package com.xiaoniu.fund.web;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import com.xiaoniu.fund.JWTUtil;
+import com.xiaoniu.fund.MD5Util;
 import com.xiaoniu.fund.entity.Fund;
 import com.xiaoniu.fund.entity.User;
 import com.xiaoniu.fund.service.FundService;
@@ -13,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import static com.xiaoniu.fund.MD5Util.MD5_32_bytes;
 
 @RestController
 @RequestMapping("/api")
@@ -175,5 +182,33 @@ public class ApiController {
 
     }
 
+    // 设置文件保存的路径，可以是绝对路径或相对路径
+    private static final String filePath = "/fund/image/";
 
+    // 处理图片上传的方法，参数名 file 要和表单中的 name 属性一致
+    @CrossOrigin // 实现跨域请求
+    @PostMapping("/upload")
+    public Map<String, Object> upload(@RequestParam("token") String token, @RequestParam("file") MultipartFile file) {
+        logger.info("upload picture");
+        try {
+            jwtUtil.getUserByToken(token);
+            if (file.isEmpty()) {
+                return Map.of("code", "0", "message", "请选择文件");
+            }
+            String fileName = file.getOriginalFilename();
+            //String suffixName = fileName.substring(fileName.lastIndexOf("."));  // 获取文件的后缀名
+            String newFileName = MD5_32_bytes(file.getBytes());  // 以MD5为文件名，减少重复存储开销
+            File dest = new File(filePath);
+            dest = new File(dest.getAbsolutePath(), newFileName);
+            logger.info(dest.toString());
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
+            }
+            if (!dest.exists()) file.transferTo(dest);
+            return Map.of("code", "1", "message", "image/" + newFileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Map.of("code", "0", "message", e.getMessage());
+        }
+    }
 }

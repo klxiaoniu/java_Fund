@@ -32,21 +32,38 @@ public class MD5Util {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(sourceStr.getBytes());
-            byte b[] = md.digest();
-            int i;
-            StringBuffer buf = new StringBuffer("");
-            for (int offset = 0; offset < b.length; offset++) {
-                i = b[offset];
-                if (i < 0)
-                    i += 256;
-                if (i < 16)
-                    buf.append("0");
-                buf.append(Integer.toHexString(i));
-            }
-            result = buf.toString();
+            result = getString(result, md);
         } catch (NoSuchAlgorithmException e) {
             System.out.println(e);
         }
+        return result;
+    }
+
+    public static String MD5_32_bytes(byte[] bytes) {
+        String result = "";
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(bytes);
+            result = getString(result, md);
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println(e);
+        }
+        return result;
+    }
+
+    private static String getString(String result, MessageDigest md) {
+        byte b[] = md.digest();
+        int i;
+        StringBuffer buf = new StringBuffer("");
+        for (int offset = 0; offset < b.length; offset++) {
+            i = b[offset];
+            if (i < 0)
+                i += 256;
+            if (i < 16)
+                buf.append("0");
+            buf.append(Integer.toHexString(i));
+        }
+        result = buf.toString();
         return result;
     }
 }

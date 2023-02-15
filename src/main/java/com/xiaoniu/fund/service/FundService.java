@@ -86,7 +86,7 @@ public class FundService {
     }
 
     public List<Fund> getFunds(int page) {
-        int limit = 4; //分页查询，每次请求返回多少条数据
+        int limit = 15; //分页查询，每次请求返回多少条数据
         //return jdbcTemplate.query("SELECT * FROM funds", fundRowMapper);
         logger.info("fetch page: " + page);
         return jdbcTemplate.query("SELECT * FROM funds WHERE isPass = 1 ORDER BY createdAt DESC LIMIT ? OFFSET ?", fundRowMapper,limit,(page-1)*limit);
