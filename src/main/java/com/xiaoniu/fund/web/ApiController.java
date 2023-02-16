@@ -33,11 +33,6 @@ public class ApiController {
     @Autowired
     JWTUtil jwtUtil;
 
-    @GetMapping("/users")
-    public List<User> users() {
-        return userService.getUsers();
-    }
-
     @GetMapping("/users/{id}")
     public User user(@PathVariable("id") long id) {
         return userService.getUserById(id);
@@ -150,20 +145,6 @@ public class ApiController {
             return Map.of("code", "0", "message", e.getMessage());
         }
     }
-
-  /*  @PostMapping("/hassignin")
-    public Map<String, Object> hassignin(HttpSession session) {
-        logger.info("try hassignin");
-        User user = (User) session.getAttribute(KEY_USER);
-        return Map.of("code", user != null ? "1" : "0");
-    }
-
-    @PostMapping("/del")
-    public Map<String, Object> delFund(HttpSession session, @RequestParam("id") String id) {
-        logger.info("try del");
-        fundService.getFundById(Long.parseLong(id)).setIsPass(Integer.parseInt(isPass));
-        return Map.of("code", 1, "message", "SETPASS_" + id + "_" + isPass);
-    }*/
 
     @PostMapping("/admin/setpass")
     public Map<String, Object> setpass(@RequestParam("token") String token, @RequestParam("id") String id, @RequestParam("isPass") String isPass) {
