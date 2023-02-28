@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.xiaoniu.fund.MD5Util.MD5_32;
 import static com.xiaoniu.fund.MD5Util.MD5_32_bytes;
 
 @RestController
@@ -161,6 +162,22 @@ public class ApiController {
             return Map.of("code", "0", "message", e.getMessage());
         }
 
+    }
+
+    @PostMapping("/updateuser")
+    public Map<String, Object> updateUser(@RequestParam("token") String token, @RequestParam("email") String email, @RequestParam("name") String name, @RequestParam("phone") String phone, @RequestParam("password") String password) {
+        logger.info("try updateUser");
+        try {
+            User user = jwtUtil.getUserByToken(token);
+            if (Objects.equals(password, "")) {
+                userService.updateUser(user, email, name, phone);   //不修改密码
+            } else {
+                userService.updateUserAll(user, email, name, phone, MD5_32(password));
+            }
+            return Map.of("code", "1", "message", "Success");
+        } catch (Exception e) {
+            return Map.of("code", "0", "message", e.getMessage());
+        }
     }
 
     // 设置文件保存的路径，可以是绝对路径或相对路径

@@ -76,7 +76,16 @@ public class UserService {
             throw new RuntimeException("User not found by id");
         }
     }
-
+    public void updateUser(User user, String email, String name, String phone) {
+        if (1 != jdbcTemplate.update("UPDATE users SET email = ?, name = ?, phone = ? WHERE id = ?", email,name,phone, user.getId())) {
+            throw new RuntimeException("User not found by id");
+        }
+    }
+    public void updateUserAll(User user, String email, String name, String phone, String password) {
+        if (1 != jdbcTemplate.update("UPDATE users SET email = ?, name = ?, phone = ?, password = ? WHERE id = ?", email,name,phone,password, user.getId())) {
+            throw new RuntimeException("User not found by id");
+        }
+    }
     public List<User> getUsers() {
         return jdbcTemplate.query("SELECT * FROM users", userRowMapper);
     }
