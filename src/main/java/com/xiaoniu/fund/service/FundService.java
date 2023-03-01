@@ -12,9 +12,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class FundService {
@@ -89,7 +87,7 @@ public class FundService {
         int limit = 15; //分页查询，每次请求返回多少条数据
         //return jdbcTemplate.query("SELECT * FROM funds", fundRowMapper);
         logger.info("fetch page: " + page);
-        return jdbcTemplate.query("SELECT * FROM funds WHERE isPass = 1 ORDER BY createdAt DESC LIMIT ? OFFSET ?", fundRowMapper,limit,(page-1)*limit);
+        return jdbcTemplate.query("SELECT * FROM funds WHERE isPass = 1 ORDER BY createdAt DESC LIMIT ? OFFSET ?", fundRowMapper, limit, (page - 1) * limit);
     }
 
     public List<Fund> getOneFunds(Long id) {
@@ -103,6 +101,8 @@ public class FundService {
 
     public void delFundById(Long id) {
         logger.info("delFund id: " + id);
-        jdbcTemplate.update("DELETE FROM funds WHERE id = ?", id);
+        if (1 != jdbcTemplate.update("DELETE FROM funds WHERE id = ?", id)) {
+            throw new RuntimeException("Fund not found by id");
+        }
     }
 }
